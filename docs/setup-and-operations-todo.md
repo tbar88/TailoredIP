@@ -34,6 +34,7 @@ Your preference: protect against risky/broken changes, but don't gate every mino
 > Net effect: things you "set into motion" run to completion automatically; only genuinely broken or risky changes stop and ask for you.
 
 ## Deferred / decide later
+- [ ] **Promote the agent team org-wide** so every repo you own inherits the same orchestrator + sub-agents. See `docs/orchestration-and-subagents.md` (create an org-level `.github` repo; the agent can prepare the files for you to copy in).
 - [ ] **GitHub Pages publishing** (for approved marketing content): pick a theme, branch, and publish path when you first want to publish something public. Not needed to operate the system.
 - [ ] **SharePoint write access**: only add Graph write permissions later if you want the agent to modify SharePoint content (start read-only).
 

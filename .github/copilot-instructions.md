@@ -28,6 +28,14 @@
 - Capability agents return findings only; they never address the user directly.
 - The Validator checks outputs against Task Spec and Artifact Spec hard constraints before anything is considered final.
 
+## Sub-agent supervision (orchestrator-oversees-subagents)
+- Treat the capability agents in `.github/agents/` as supervised sub-agents. When a request is multi-part, cross-workstream, or benefits from specialist work, decompose it and delegate each part rather than doing everything in one pass.
+- Run independent sub-agents in parallel when their work does not depend on each other (for example, target research and pipeline analysis), then fan their findings back in.
+- Supervise actively: review each sub-agent's findings, re-delegate or ask follow-up sub-tasks when results are incomplete or conflicting, and resolve cross-workstream conflicts at the orchestrator layer.
+- Use the Validator on a separate model as the final, independent check before anything is treated as done.
+- Only the orchestrator's single reconciled response reaches the user; sub-agent chatter stays internal.
+- Match the work to the task: simple requests can be handled directly without fan-out; reserve multi-agent supervision for requests where it genuinely helps.
+
 ## Delegation rules
 For every delegated task, pass the following packet to the selected capability agent:
 1. Objective

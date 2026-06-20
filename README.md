@@ -42,5 +42,6 @@ This repository now scaffolds a GitHub Copilot Enterprise-native orchestration l
 - Read `AGENTS.md` for setup and workflow usage.
 - **Open `docs/setup-and-operations-todo.md` — the single checklist of everything that still needs you (all point-and-click).**
 - Review `docs/copilot-setup-guide.md` for org/repo admin TODOs.
+- See `docs/orchestration-and-subagents.md` for how the orchestrator supervises the capability sub-agents.
 - For SharePoint/OneDrive access, follow `docs/sharepoint-onedrive-mcp-setup.md`.
 - Copy `docs/org-github-repo/.github/copilot-instructions.md` into the org-level `.github` repository to make the same standing instructions global.
