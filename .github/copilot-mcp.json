@@ -1,7 +1,9 @@
 {
   "notes": [
     "GitHub and Playwright MCP are assumed to be available by default and are not redefined here.",
-    "Replace every TODO placeholder with real values in repo or org secrets before enabling optional servers."
+    "Configure these servers for the coding agent in repo Settings > Copilot > Coding agent > MCP servers.",
+    "Any credential the coding agent needs must be stored as a repository secret whose name starts with COPILOT_MCP_ (for example COPILOT_MCP_AZURE_CLIENT_SECRET).",
+    "Replace every TODO placeholder with real values before enabling optional servers."
   ],
   "mcpServers": {
     "notion": {
@@ -9,14 +11,23 @@
       "optional": true,
       "transport": {
         "type": "http",
-        "url": "TODO_NOTION_MCP_URL"
+        "url": "https://mcp.notion.com/mcp"
       },
       "authentication": {
-        "type": "bearer",
-        "token": "TODO_SET_NOTION_TOKEN_IN_SECRET"
+        "type": "oauth",
+        "notes": "Notion's hosted MCP uses interactive OAuth sign-in; authorize the connection in the GitHub Copilot MCP UI rather than storing a static token in this file."
       },
-      "workspace": "TODO_NOTION_PROJECT_WORKSPACE_NAME_OR_ID",
-      "notes": "TODO: Confirm the correct Notion MCP endpoint and workspace or database scope."
+      "workspace": "TODO_NOTION_WORKSPACE_NAME_OR_ID",
+      "notes": "Hosted Notion MCP endpoint confirmed. Set enabled to true after authorizing the connection in repo Settings > Copilot > Coding agent > MCP servers."
+    },
+    "microsoft-learn": {
+      "enabled": true,
+      "optional": false,
+      "transport": {
+        "type": "http",
+        "url": "https://learn.microsoft.com/api/mcp"
+      },
+      "notes": "Public, no-authentication Microsoft Learn MCP for grounded Microsoft 365, Graph, and SharePoint documentation lookups. Useful when configuring the SharePoint/OneDrive integration."
     },
     "web-research": {
       "enabled": true,
@@ -36,14 +47,14 @@
       },
       "authentication": {
         "type": "oauth2-client-credentials",
-        "tenant_id": "TODO_AZURE_TENANT_ID_SECRET",
-        "client_id": "TODO_AZURE_CLIENT_ID_SECRET",
-        "client_secret": "TODO_AZURE_CLIENT_SECRET_SECRET"
+        "tenant_id": "COPILOT_MCP_AZURE_TENANT_ID",
+        "client_id": "COPILOT_MCP_AZURE_CLIENT_ID",
+        "client_secret": "COPILOT_MCP_AZURE_CLIENT_SECRET"
       },
       "sites": [
         "TODO_SHAREPOINT_SITE_ID"
       ],
-      "notes": "TODO: Limit scopes to the minimum needed for approved SharePoint libraries."
+      "notes": "No turnkey hosted SharePoint/OneDrive MCP exists for the GitHub coding agent yet; this needs an Azure AD (Entra) app registration with Microsoft Graph permissions plus a Graph MCP endpoint. Store the secrets above as repo secrets prefixed COPILOT_MCP_. Treat as a later step; use the microsoft-learn server above for setup guidance."
     }
   }
 }
