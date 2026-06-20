@@ -1,0 +1,49 @@
+{
+  "notes": [
+    "GitHub and Playwright MCP are assumed to be available by default and are not redefined here.",
+    "Replace every TODO placeholder with real values in repo or org secrets before enabling optional servers."
+  ],
+  "mcpServers": {
+    "notion": {
+      "enabled": false,
+      "optional": true,
+      "transport": {
+        "type": "http",
+        "url": "TODO_NOTION_MCP_URL"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "TODO_SET_NOTION_TOKEN_IN_SECRET"
+      },
+      "workspace": "TODO_NOTION_PROJECT_WORKSPACE_NAME_OR_ID",
+      "notes": "TODO: Confirm the correct Notion MCP endpoint and workspace or database scope."
+    },
+    "web-research": {
+      "enabled": true,
+      "optional": false,
+      "transport": {
+        "type": "builtin",
+        "provider": "web-search"
+      },
+      "notes": "Use for target-client research, signal scans, and current-events verification."
+    },
+    "microsoft-graph-sharepoint": {
+      "enabled": false,
+      "optional": true,
+      "transport": {
+        "type": "http",
+        "url": "TODO_GRAPH_MCP_URL"
+      },
+      "authentication": {
+        "type": "oauth2-client-credentials",
+        "tenant_id": "TODO_AZURE_TENANT_ID_SECRET",
+        "client_id": "TODO_AZURE_CLIENT_ID_SECRET",
+        "client_secret": "TODO_AZURE_CLIENT_SECRET_SECRET"
+      },
+      "sites": [
+        "TODO_SHAREPOINT_SITE_ID"
+      ],
+      "notes": "TODO: Limit scopes to the minimum needed for approved SharePoint libraries."
+    }
+  }
+}

@@ -1,0 +1,157 @@
+name: Task Spec
+description: Open a canonical TailoredIP task for the Business Orchestrator.
+title: "[Task Spec] "
+labels:
+  - task-spec
+body:
+  - type: input
+    id: task_id
+    attributes:
+      label: task_id
+      description: Unique task identifier.
+      placeholder: intake-2026-06-20-001
+    validations:
+      required: true
+
+  - type: dropdown
+    id: task_type
+    attributes:
+      label: task_type
+      options:
+        - research
+        - draft
+        - transform
+        - validate
+        - intake
+        - outreach
+        - strategy
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: objective
+      description: The business result this task should achieve.
+      placeholder: Close the loop on a high-potential consulting inquiry.
+    validations:
+      required: true
+
+  - type: textarea
+    id: business_context
+    attributes:
+      label: business_context
+      description: Commercial, legal, or operational context.
+      placeholder: Explain why this matters now and which workstream it supports.
+    validations:
+      required: true
+
+  - type: input
+    id: audience
+    attributes:
+      label: audience
+      placeholder: Internal only; prospective consulting client; public marketing audience
+    validations:
+      required: true
+
+  - type: textarea
+    id: inputs
+    attributes:
+      label: inputs[]
+      description: One input or source artifact per line.
+      placeholder: |
+        state/03_intake_qualification/intake-qualification.csv
+        Link to source email or meeting notes
+    validations:
+      required: true
+
+  - type: textarea
+    id: hard_constraints
+    attributes:
+      label: hard_constraints[]
+      description: Non-negotiable requirements.
+      placeholder: |
+        Preserve client-confidential information.
+        Do not change legal meaning or citations.
+    validations:
+      required: true
+
+  - type: textarea
+    id: soft_preferences
+    attributes:
+      label: soft_preferences[]
+      description: Helpful preferences, style notes, or ranking heuristics.
+      placeholder: |
+        Prefer checklists.
+        Optimize for revenue stabilization.
+    validations:
+      required: false
+
+  - type: textarea
+    id: required_outputs
+    attributes:
+      label: required_outputs[]
+      description: What artifacts or updates must be produced.
+      placeholder: |
+        Updated intake row
+        Recommendation memo
+    validations:
+      required: true
+
+  - type: textarea
+    id: forbidden_changes
+    attributes:
+      label: forbidden_changes[]
+      description: What must not change.
+      placeholder: |
+        Do not alter legal meaning.
+        Do not invent missing budget data.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: active_agents
+    attributes:
+      label: active_agents[]
+      description: Select the agents that should be available for delegation.
+      options:
+        - label: target-client-research
+        - label: consulting-pipeline
+        - label: intake-qualification
+        - label: marketing-content
+        - label: consulting-delivery
+        - label: career-opportunity
+        - label: work-product-refinement
+        - label: validator
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: status
+      options:
+        - backlog
+        - ready
+        - in_progress
+        - blocked
+        - done
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: owner
+      placeholder: tbar88
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: notes
+      description: Optional notes, assumptions, or follow-ups.
+      placeholder: Include admin TODOs or missing credentials here.
+    validations:
+      required: false
