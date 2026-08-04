@@ -1,0 +1,28 @@
+{
+  "task_id": "TODO_TASK_ID",
+  "task_type": "research",
+  "objective": "TODO_OBJECTIVE",
+  "business_context": "TODO_BUSINESS_CONTEXT",
+  "audience": "TODO_AUDIENCE",
+  "inputs": [
+    "TODO_INPUT_1"
+  ],
+  "hard_constraints": [
+    "TODO_HARD_CONSTRAINT_1"
+  ],
+  "soft_preferences": [
+    "TODO_SOFT_PREFERENCE_1"
+  ],
+  "required_outputs": [
+    "TODO_REQUIRED_OUTPUT_1"
+  ],
+  "forbidden_changes": [
+    "TODO_FORBIDDEN_CHANGE_1"
+  ],
+  "active_agents": [
+    "TODO_AGENT_NAME"
+  ],
+  "status": "ready",
+  "owner": "tbar88",
+  "notes": "TODO_NOTES"
+}

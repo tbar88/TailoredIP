@@ -1,0 +1,60 @@
+name: Validate scaffolding
+
+# Light-touch, risk-focused safety net.
+# It only blocks changes that are genuinely broken (invalid JSON/YAML or a
+# malformed Spaces register). Routine content edits pass automatically, so
+# minor changes never need manual approval.
+
+on:
+  pull_request:
+    paths:
+      - 'templates/**'
+      - '.github/copilot-mcp.json'
+      - '.github/workflows/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'state/09_templates_prompts/spaces-mirror-register.csv'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate JSON templates and MCP config
+        run: |
+          set -euo pipefail
+          python3 -m json.tool templates/task-spec.template.json >/dev/null
+          python3 -m json.tool templates/artifact-spec.template.json >/dev/null
+          python3 -m json.tool .github/copilot-mcp.json >/dev/null
+          echo "JSON files are valid."
+
+      - name: Validate workflow and issue-template YAML
+        run: |
+          set -euo pipefail
+          ruby -e 'require "yaml"; Dir[".github/workflows/*.yml", ".github/ISSUE_TEMPLATE/*.yml"].each { |f| YAML.load_file(f) }'
+          echo "YAML files are valid."
+
+      - name: Validate Spaces mirror register CSV
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import csv
+          with open('state/09_templates_prompts/spaces-mirror-register.csv', newline='') as fh:
+              rows = list(csv.reader(fh))
+          assert rows, "CSV is empty"
+          header = rows[0]
+          assert len(header) == 6, f"Expected 6 columns, found {len(header)}"
+          for i, row in enumerate(rows[1:], start=2):
+              if not any(cell.strip() for cell in row):
+                  continue
+              assert len(row) == 6, f"Row {i} has {len(row)} columns, expected 6"
+          print(f"CSV is valid ({len(rows)} rows).")
+          PY

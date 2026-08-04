@@ -1,0 +1,112 @@
+name: Weekly target and signal scan
+
+on:
+  schedule:
+    - cron: '15 13 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build issue body from Task Spec template
+        env:
+          TASK_TITLE: 'Weekly target and signal scan'
+          TASK_ID_PREFIX: 'target-scan'
+          TASK_TYPE: 'research'
+          OBJECTIVE: 'Review current AI, search, sales, and marketing signals and propose high-fit additions to the target-client and consulting-pipeline trackers.'
+          BUSINESS_CONTEXT: 'This recurring task supports revenue stabilization by feeding qualified target research into the consulting pipeline.'
+          AUDIENCE: 'Internal only'
+          INPUTS: 'state/01_consulting_pipeline/consulting-pipeline.csv||state/02_target_clients/target-client-tracker.csv||state/00_command_center/current-command-center.md'
+          HARD_CONSTRAINTS: 'Do not invent company facts or urgency signals.||Keep repo state as the source of truth.||Any proposed outreach angle must preserve factual accuracy.'
+          SOFT_PREFERENCES: 'Prioritize near-term revenue opportunities.||Prefer companies with visible AI/search/marketing/sales exposure.'
+          REQUIRED_OUTPUTS: 'Proposed target-client rows.||Any related pipeline-row proposals.||A summary of why each addition matters commercially.'
+          FORBIDDEN_CHANGES: 'Do not rewrite existing tracker history without evidence.||Do not turn speculative signals into verified facts.'
+          ACTIVE_AGENTS: 'target-client-research||consulting-pipeline||validator'
+          TASK_STATUS: 'ready'
+          TASK_OWNER: 'tbar88'
+          TASK_NOTES: 'Expected result is a PR with proposed tracker updates plus concise rationale.'
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os
+          from datetime import datetime, timezone
+
+          repo = Path('.')
+          template = json.loads((repo / 'templates' / 'task-spec.template.json').read_text())
+          today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+          template['task_id'] = f"{os.environ['TASK_ID_PREFIX']}-{today}"
+          template['task_type'] = os.environ['TASK_TYPE']
+          template['objective'] = os.environ['OBJECTIVE']
+          template['business_context'] = os.environ['BUSINESS_CONTEXT']
+          template['audience'] = os.environ['AUDIENCE']
+          template['inputs'] = [item for item in os.environ['INPUTS'].split('||') if item]
+          template['hard_constraints'] = [item for item in os.environ['HARD_CONSTRAINTS'].split('||') if item]
+          template['soft_preferences'] = [item for item in os.environ['SOFT_PREFERENCES'].split('||') if item]
+          template['required_outputs'] = [item for item in os.environ['REQUIRED_OUTPUTS'].split('||') if item]
+          template['forbidden_changes'] = [item for item in os.environ['FORBIDDEN_CHANGES'].split('||') if item]
+          template['active_agents'] = [item for item in os.environ['ACTIVE_AGENTS'].split('||') if item]
+          template['status'] = os.environ['TASK_STATUS']
+          template['owner'] = os.environ['TASK_OWNER']
+          template['notes'] = os.environ['TASK_NOTES']
+
+          def bullet_lines(values):
+              return '\n'.join(f"  - {value}" for value in values) if values else '  - None'
+
+          body = "\n".join([
+              "## Task Spec",
+              f"- `task_id`: {template['task_id']}",
+              f"- `task_type`: {template['task_type']}",
+              f"- `objective`: {template['objective']}",
+              f"- `business_context`: {template['business_context']}",
+              f"- `audience`: {template['audience']}",
+              f"- `inputs[]`:\n{bullet_lines(template['inputs'])}",
+              f"- `hard_constraints[]`:\n{bullet_lines(template['hard_constraints'])}",
+              f"- `soft_preferences[]`:\n{bullet_lines(template['soft_preferences'])}",
+              f"- `required_outputs[]`:\n{bullet_lines(template['required_outputs'])}",
+              f"- `forbidden_changes[]`:\n{bullet_lines(template['forbidden_changes'])}",
+              f"- `active_agents[]`:\n{bullet_lines(template['active_agents'])}",
+              f"- `status`: {template['status']}",
+              f"- `owner`: {template['owner']}",
+              f"- `notes`: {template['notes']}",
+          ])
+          Path('/tmp/task-spec-body.md').write_text(body)
+          Path('/tmp/task-title.txt').write_text(f"{os.environ['TASK_TITLE']} - {today}\n")
+          PY
+
+      - name: Create GitHub issue
+        id: create_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          issue_title="$(cat /tmp/task-title.txt)"
+          issue_url="$(gh issue create --title "$issue_title" --body-file /tmp/task-spec-body.md)"
+          issue_number="${issue_url##*/}"
+          issue_node_id="$(gh api repos/${{ github.repository }}/issues/$issue_number --jq '.node_id')"
+          echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
+          echo "issue_node_id=$issue_node_id" >> "$GITHUB_OUTPUT"
+
+      - name: Assign copilot-swe-agent when available
+        if: ${{ vars.COPILOT_AGENT_ASSIGNMENT_ENABLED == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          assignee_id="$(gh api graphql -f query='query($owner:String!, $repo:String!, $login:String!) { repository(owner:$owner, name:$repo) { assignableUsers(first:100, query:$login) { nodes { id login } } } }' -F owner='${{ github.repository_owner }}' -F repo='${{ github.event.repository.name }}' -F login='copilot-swe-agent' --jq '.data.repository.assignableUsers.nodes[]? | select(.login=="copilot-swe-agent") | .id' || true)"
+          if [ -z "$assignee_id" ]; then
+            echo 'copilot-swe-agent is not assignable yet; leaving the issue unassigned.'
+            exit 0
+          fi
+          gh api graphql -f query='mutation($issue:ID!, $assigneeIds:[ID!]!) { addAssigneesToAssignable(input:{assignableId:$issue, assigneeIds:$assigneeIds}) { assignable { ... on Issue { number } } } }' -F issue='${{ steps.create_issue.outputs.issue_node_id }}' -F assigneeIds[]="$assignee_id"
+
+      - name: Note manual admin follow-up when assignment is disabled
+        if: ${{ vars.COPILOT_AGENT_ASSIGNMENT_ENABLED != 'true' }}
+        run: echo 'Set COPILOT_AGENT_ASSIGNMENT_ENABLED=true after copilot-swe-agent is enabled for issue assignment.'

@@ -1,0 +1,31 @@
+# Sample issue: triage an inquiry
+
+## Task Spec
+- `task_id`: sample-intake-triage-001
+- `task_type`: intake
+- `objective`: Triage a new inquiry to decide whether to proceed, decline, or refer while preserving revenue-first discipline.
+- `business_context`: A prospect reached out about AI-search-related brand risk and wants fast guidance. The first goal is to qualify fit, urgency, and budget without compromising ethics or conflicts review.
+- `audience`: Internal only
+- `inputs[]`:
+  - state/03_intake_qualification/intake-qualification.csv
+  - Source email or inquiry notes
+- `hard_constraints[]`:
+  - Do not invent facts not present in the inquiry.
+  - Surface any conflict concern explicitly.
+  - Do not alter legal meaning if source language is cleaned up.
+- `soft_preferences[]`:
+  - Prefer same-day next steps when fit is strong.
+  - Keep the recommendation checklist-style.
+- `required_outputs[]`:
+  - Updated intake tracker row
+  - Proceed / decline / refer recommendation
+  - Missing-information list for follow-up
+- `forbidden_changes[]`:
+  - No substantive legal advice beyond the available facts
+  - No invented budget or urgency scores
+- `active_agents[]`:
+  - intake-qualification
+  - validator
+- `status`: ready
+- `owner`: tbar88
+- `notes`: Route: Business Orchestrator -> intake-qualification -> validator -> single user response.

@@ -1,0 +1,13 @@
+## Artifact Spec validation checklist
+- [ ] `artifact_id` is captured or intentionally N/A
+- [ ] `artifact_type` is identified (`memo`, `spreadsheet`, `deck`, `image`, `intake form`, `email`, or `marketing asset`)
+- [ ] Objective and audience are explicit
+- [ ] `substance_constraints[]` were honored
+- [ ] `structure_requirements[]` were met
+- [ ] `transformation_rules[]` were followed
+- [ ] `presentation_rules[]` were followed
+- [ ] `deliverable_format` is specified
+- [ ] `source_artifacts[]` are listed
+- [ ] `validation_checks[]` were completed
+- [ ] Guardrail confirmed: formatting, cleanup, conversion, or polish did not alter legal meaning, holdings, citations, factual claims, data values, prospect/client information, or strategy
+- [ ] Validator findings were reviewed before merge

@@ -1,0 +1,25 @@
+{
+  "artifact_id": "TODO_ARTIFACT_ID",
+  "artifact_type": "memo",
+  "objective": "TODO_OBJECTIVE",
+  "audience": "TODO_AUDIENCE",
+  "substance_constraints": [
+    "TODO_SUBSTANCE_CONSTRAINT_1"
+  ],
+  "structure_requirements": [
+    "TODO_STRUCTURE_REQUIREMENT_1"
+  ],
+  "transformation_rules": [
+    "TODO_TRANSFORMATION_RULE_1"
+  ],
+  "presentation_rules": [
+    "TODO_PRESENTATION_RULE_1"
+  ],
+  "deliverable_format": "TODO_DELIVERABLE_FORMAT",
+  "source_artifacts": [
+    "TODO_SOURCE_ARTIFACT_1"
+  ],
+  "validation_checks": [
+    "TODO_VALIDATION_CHECK_1"
+  ]
+}
